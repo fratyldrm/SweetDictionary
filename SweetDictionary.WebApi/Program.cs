@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.EntityFrameworkCore;
 using SweetDictionary.Repository.Contexts;
 using SweetDictionary.Repository.Repositories.Abstracts;
 using SweetDictionary.Repository.Repositories.Concretes;
@@ -14,7 +15,7 @@ builder.Services.AddControllers();
 
 builder.Services.AddScoped<IPostService, PostService>();
 builder.Services.AddScoped<IPostRepository, EfPostRepository>();
-builder.Services.AddDbContext<BaseDbContext>();
+builder.Services.AddDbContext<BaseDbContext>(opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("SqlConnection")));
 builder.Services.AddAutoMapper(typeof(MappingProfiles));
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

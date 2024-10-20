@@ -15,7 +15,7 @@ public  class BaseDbContext:DbContext
         
     }
 
-
+    public DbSet<User> Users { get; set; }
     public DbSet<Post> Posts { get; set; }
 
 }

@@ -30,6 +30,9 @@ namespace SweetDictionary.Repository.Configurations
             builder.HasMany(x => x.Comments).WithOne(x => x.Post).HasForeignKey(x => x.PostId).OnDelete(DeleteBehavior.NoAction);
 
 
+            builder.Navigation(x => x.Category).AutoInclude();
+            builder.Navigation(x => x.Author).AutoInclude();
+            builder.Navigation(x => x.Comments).AutoInclude();
         }
     }
 }

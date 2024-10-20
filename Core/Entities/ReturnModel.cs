@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Core.Entities;
 
-public class ReturnModels<TData>
+public class ReturnModel<TData>
 {
     public TData Data { get; set; }
 

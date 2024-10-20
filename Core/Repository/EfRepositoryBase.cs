@@ -31,8 +31,8 @@ public abstract  class EfRepositoryBase<TContext, TEntity, TId> : IRepository<TE
 
     public TEntity? Delete(TEntity entity)
     {
-     Context.Set<TEntity>().Remove(entity);
-        Context.SaveChanges();
+        Context.Set<TEntity>().Remove(entity);
+        Context.SaveChanges(); 
         return entity;
     }
 

@@ -1,44 +1,51 @@
-﻿
-using AutoMapper;
-using Azure;
+﻿using AutoMapper;
 using Core.Entities;
+using Core.Exceptions;
 using SweetDictionary.Models.Entities;
 using SweetDictionary.Models.Posts;
 using SweetDictionary.Repository.Repositories.Abstracts;
 using SweetDictionary.Service.Abstract;
+using SweetDictionary.Service.Rules;
 
+namespace SweetDictionary.Service.Concretes;
 
-namespace SweetDictionary.Service.Concrates;
-
-public sealed class PostService :IPostService
+public sealed class PostService : IPostService
 {
     private readonly IPostRepository _postRepository;
     private readonly IMapper _mapper;
+    private readonly PostBusinessRules _businessRules;
 
-    public PostService(IPostRepository postRepository, IMapper mapper)
+    public PostService(IPostRepository postRepository, IMapper mapper, PostBusinessRules businessRules)
     {
         _postRepository = postRepository;
         _mapper = mapper;
+        _businessRules = businessRules;
     }
-    
+
     public ReturnModel<PostResponseDto> Add(CreatePostRequestDto dto)
     {
-         Post  createdPost= _mapper.Map<Post>(dto); 
-        createdPost.Id=Guid.NewGuid();
+        Post createdPost = _mapper.Map<Post>(dto);
+        createdPost.Id = Guid.NewGuid();
 
-        Post post=_postRepository.Add(createdPost);
+        Post post = _postRepository.Add(createdPost);
+
         PostResponseDto response = _mapper.Map<PostResponseDto>(post);
+
         return new ReturnModel<PostResponseDto>
         {
-            Data= response,
-            Success= true,
-            Message="Post Eklendi",
-            Status=200,
+            Data = response,
+            Message = "Post eklendi.",
+            Status = 200,
+            Success = true
         };
     }
 
     public ReturnModel<string> Delete(Guid id)
     {
+        _businessRules.PostIsPresent(id);
+
+
+
         Post? post = _postRepository.GetById(id);
         Post deletedPost = _postRepository.Delete(post);
 
@@ -49,21 +56,18 @@ public sealed class PostService :IPostService
             Status = 204,
             Success = true
         };
-        
-            
-        
     }
 
     public ReturnModel<List<PostResponseDto>> GetAll()
     {
-         var posts= _postRepository.GetAll();
-        List<PostResponseDto> response=_mapper.Map<List<PostResponseDto>>(posts);
+        var posts = _postRepository.GetAll();
+        List<PostResponseDto> responses = _mapper.Map<List<PostResponseDto>>(posts);
         return new ReturnModel<List<PostResponseDto>>
         {
-            Data = response,
-            Success = true,
+            Data = responses,
             Message = string.Empty,
             Status = 200,
+            Success = true
         };
     }
 
@@ -108,28 +112,57 @@ public sealed class PostService :IPostService
         };
     }
 
-    public ReturnModel<PostResponseDto> GetById(Guid id)  
+    public ReturnModel<PostResponseDto> GetById(Guid id)
     {
-        var post= _postRepository.GetById(id);
-        var response= _mapper.Map<PostResponseDto>(post);
-        return new retunModels<PostResponseDto>
+        try
         {
-            Data = response,
-            Success= true,
-            Message= "İlgili post gösterild",
-            Status=200,
+            _businessRules.PostIsPresent(id);
 
-        };
-        
+            var post = _postRepository.GetById(id);
+            var response = _mapper.Map<PostResponseDto>(post);
+            return new ReturnModel<PostResponseDto>
+            {
+                Data = response,
+                Message = "İlgili post gösterildi",
+                Status = 200,
+                Success = true
+            };
+        }
+        catch (Exception ex)
+        {
+            return ExceptionHandler<PostResponseDto>.HandleException(ex);
+        }
+
     }
 
     public ReturnModel<PostResponseDto> Update(UpdatePostRequestDto dto)
     {
-        throw new NotImplementedException();
+        try
+        {
+            _businessRules.PostIsPresent(dto.Id);
+
+            Post post = _mapper.Map<Post>(dto);
+            Post updated = _postRepository.Update(post);
+
+            PostResponseDto response = _mapper.Map<PostResponseDto>(updated);
+
+            return new ReturnModel<PostResponseDto>
+            {
+                Data = response,
+                Message = "Post Güncellendi.",
+                Status = 200,
+                Success = true
+            };
+
+        }
+        catch (Exception ex)
+        {
+            return ExceptionHandler<PostResponseDto>.HandleException(ex);
+        }
+
+
+
     }
 
-    ReturnModel<PostResponseDto> IPostService.GetAllByAuthorId(long authorId)
-    {
-        throw new NotImplementedException();
-    }
+   
 }

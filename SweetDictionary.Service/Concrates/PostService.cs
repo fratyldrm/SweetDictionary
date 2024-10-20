@@ -38,11 +38,29 @@ public sealed class PostService :IPostService
 
     public ReturnModels<List<PostResponseDto>> GetAll()
     {
-        throw new NotImplementedException();
+         var posts= _postRepository.GetAll();
+        List<PostResponseDto> response=_mapper.Map<List<PostResponseDto>>(posts);
+        return new ReturnModels<List<PostResponseDto>>
+        {
+            Data = response,
+            Success = true,
+            Message = string.Empty,
+            Status = 200,
+        };
     }
 
     public ReturnModels<PostResponseDto> GetById(Guid id)
     {
-        throw new NotImplementedException();
+        var post= _postRepository.GetById(id);
+        var response= _mapper.Map<PostResponseDto>(post);
+        return new retunModels<PostResponseDto>
+        {
+            Data = response,
+            Success= true,
+            Message= "İlgili post gösterild",
+            Status=200,
+
+        };
+        
     }
 }

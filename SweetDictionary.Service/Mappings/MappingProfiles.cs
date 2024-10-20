@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+﻿  using AutoMapper;
 using SweetDictionary.Models.Entities;
 using SweetDictionary.Models.Posts;
 using System;

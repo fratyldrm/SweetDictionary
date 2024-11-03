@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -36,9 +37,15 @@ public abstract  class EfRepositoryBase<TContext, TEntity, TId> : IRepository<TE
         return entity;
     }
 
-    public List<TEntity> GetAll()
+    public List<TEntity> GetAll(Expression<Func<TEntity,bool>>? filter=null)
     {
-      return Context.Set<TEntity>().ToList();
+        IQueryable<TEntity> query = Context.Set<TEntity>();
+
+        if(filter is not null)
+        {
+            query = query.Where(filter);
+        }
+        return query.ToList();
     }
 
     public TEntity? GetById(TId id)

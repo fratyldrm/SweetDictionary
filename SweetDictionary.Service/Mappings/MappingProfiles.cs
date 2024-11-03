@@ -14,7 +14,8 @@ public class MappingProfiles:Profile
     public MappingProfiles()
     {
         CreateMap<CreatePostRequestDto,Post>();
-        CreateMap < Post,PostResponseDto>();
+        CreateMap <Post,PostResponseDto>();
+        CreateMap<UpdatePostRequestDto, Post>();
     }
 
 }

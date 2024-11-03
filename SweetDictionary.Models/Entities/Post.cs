@@ -13,7 +13,7 @@ public sealed class Post : Entity<Guid>
 
 
 
-    public long AuthorId { get; set; }
+    public string AuthorId { get; set; }
     public User Author { get; set; }
 
 
